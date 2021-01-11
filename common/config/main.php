@@ -12,8 +12,10 @@ return [
         'formatter' => [
             'class' => 'yii\i18n\Formatter',
             'nullDisplay' => '-',
-            'defaultTimeZone' => 'Europe/Moscow',
-            'locale' => 'ru-RU',
+            // 'defaultTimeZone' => 'Europe/Moscow',
+            'defaultTimeZone' => 'Algiers/Algeria',
+            // 'locale' => 'ru-RU',
+            'locale' => 'en-US',
             'thousandSeparator' => ' ',
             'decimalSeparator' => '.',
             // must enable php intl extension for \NumberFormatter
