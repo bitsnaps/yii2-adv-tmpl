@@ -5,13 +5,14 @@ use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use frontend\models\ContactForm;
 
 /**
  * Site controller
  */
 class SiteController extends Controller
 {
-    
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +37,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
-    }    
+    }
 
     /**
      * Displays contact page.

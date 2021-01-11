@@ -19,9 +19,12 @@ use yii\base\Model;
  */
 class ContactForm extends Model
 {
+    public $name;
     public $email;
     public $phone;
+    public $subject;
     public $message;
+    public $body;
     public $verifyCode;
 
 
@@ -81,7 +84,7 @@ class ContactForm extends Model
             $contact_form->user_id= Yii::$app->user->id;
 
         $this->message= $this->message. '
-        
+
         Email: '.$this->email . '
         '.Yii::t('app-model', 'Phone').': '.$this->phone;
 
@@ -119,8 +122,8 @@ class ContactForm extends Model
      *
      * @param $message
      * @return bool
-     *
-    public function sendViber($message) {
+     */
+    /*public function sendViber($message) {
         $settings = Yii::$app->settings;
         $apiKey = $settings->get('ViberForm', 'apiKey');
         $finance_list = explode(';',$settings->get('ViberForm', 'finance'));
