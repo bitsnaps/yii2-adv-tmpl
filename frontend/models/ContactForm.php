@@ -23,7 +23,6 @@ class ContactForm extends Model
     public $email;
     public $phone;
     public $subject;
-    public $message;
     public $body;
     public $verifyCode;
 
@@ -36,11 +35,11 @@ class ContactForm extends Model
         return [
             ['email', 'required', 'on' => 'contact'],
             ['phone', 'required', 'on' => 'callback'],
-            [['message'], 'required'],
-            [['email', 'message', 'phone'], 'filter', 'filter' => 'strip_tags'],
+            [['body'], 'required'],
+            [['email', 'body', 'phone'], 'filter', 'filter' => 'strip_tags'],
             ['email', 'email'],
-            [['message'], 'string', 'min' => 25, 'on' => 'contact'],
-            [['message'], 'string', 'min' => 5, 'on' => 'callback'],
+            [['body'], 'string', 'min' => 25, 'on' => 'contact'],
+            [['body'], 'string', 'min' => 5, 'on' => 'callback'],
             ['phone', 'string', 'min' => 10],
             [['verifyCode'], ReCaptchaValidator::class]
 
@@ -54,7 +53,7 @@ class ContactForm extends Model
     {
         return [
             'phone' => Yii::t('app-model', 'Phone'),
-            'message' => Yii::t('app-model', 'Message'),
+            'body' => Yii::t('app-model', 'Body'),
             'verifyCode' => Yii::t('app-model', 'Verification Code')
         ];
     }
@@ -65,8 +64,8 @@ class ContactForm extends Model
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios['contact'] = ['email', 'message', 'phone', 'verifyCode'];
-        $scenarios['callback'] = ['email', 'message', 'phone', 'verifyCode'];
+        $scenarios['contact'] = ['email', 'body', 'phone', 'verifyCode'];
+        $scenarios['callback'] = ['email', 'body', 'phone', 'verifyCode'];
         return $scenarios;
     }
 
@@ -83,12 +82,12 @@ class ContactForm extends Model
         if(isset(Yii::$app->user) && !Yii::$app->user->isGuest)
             $contact_form->user_id= Yii::$app->user->id;
 
-        $this->message= $this->message. '
+        $this->body= $this->body. '
 
         Email: '.$this->email . '
         '.Yii::t('app-model', 'Phone').': '.$this->phone;
 
-        $contact_form->textBody=$this->message;
+        $contact_form->textBody=$this->body;
         $contact_form->subject="From contacts Page";
         $contact_form->setToEmail=$this->email? $this->email: Yii::$app->params['adminEmail'];
         $contact_form->setToName=$this->email? $this->email: Yii::$app->params['adminEmail'];
@@ -100,11 +99,11 @@ class ContactForm extends Model
             ->setTo($email)
             ->setFrom([Yii::$app->params['supportEmail'] => 'С контактов'])
             ->setSubject(Yii::$app->name)
-            ->setTextBody($this->message)
+            ->setTextBody($this->body)
             ->send();
-        //$result =  mail ( Yii::$app->params['adminEmail'], 'Заявка с сайта', $this->message);
+        //$result =  mail ( Yii::$app->params['adminEmail'], 'Заявка с сайта', $this->body);
 
-        //$this->sendViber($this->message);
+        //$this->sendViber($this->body);
 
         $contact_form->status=$result;
         $contact_form->save();
@@ -113,17 +112,17 @@ class ContactForm extends Model
     }
 
     /**
-     * Send messages via Viber messenger
+     * Send bodys via Viber messenger
      *
      * requirements:
      * composer require bogdaan/viber-bot-php
      * composer require yii2mod/yii2-settings
      * and then Config !
      *
-     * @param $message
+     * @param $body
      * @return bool
      */
-    /*public function sendViber($message) {
+    /*public function sendViber($body) {
         $settings = Yii::$app->settings;
         $apiKey = $settings->get('ViberForm', 'apiKey');
         $finance_list = explode(';',$settings->get('ViberForm', 'finance'));
@@ -144,18 +143,18 @@ class ContactForm extends Model
             for($i=0; $i<count($finance_list); $i++) {
                 $user_id= $finance_list[$i];
 
-                $bot->getClient()->sendMessage(
-                    (new \Viber\Api\Message\Text())
+                $bot->getClient()->sendBody(
+                    (new \Viber\Api\Body\Text())
                         ->setSender($botSender)
                         ->setReceiver($user_id)
-                        ->setText($message)
+                        ->setText($body)
                 );
             }
 
             return true;
 
         } catch (\Exception $e) {
-            Yii::warning('Exception: '. $e->getMessage());
+            Yii::warning('Exception: '. $e->getBody());
             if ($bot) {
                 //Yii::warning('Actual sign: ' . $bot->getSignHeaderValue());
                 //Yii::warning('Actual body: ' . $bot->getInputBody());
